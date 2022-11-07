@@ -1,9 +1,11 @@
 import webbrowser
+import gen_alg
 
-import main
 
 if __name__ == '__main__':
+    # gen_alg.genetics_algorithm()
     try: 
-        main.start()
+        gen_alg.genetics_algorithm()
     except Exception as e:
-        webbrowser.open('https://stackoverflow.com/search?q=' + str(e), new=2, autoraise=True)
+        print(e)
+        #webbrowser.open('https://stackoverflow.com/search?q=' + str(e), new=2, autoraise=True)
