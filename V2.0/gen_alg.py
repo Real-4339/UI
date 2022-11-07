@@ -5,8 +5,9 @@ import classes
 def fitnes(array: list) -> int:
     return sum(classes.distance(array[a].x, array[a].y, array[a+1].x, array[a+1].y) for a in range(len(array)-1))  # type: ignore
 
-def new_permutation(array: list) -> list:
-    permutations = [] # list of couple vectors
+def new_permutation(array: list[list[classes.City]]) -> list[list[classes.City], list[int]]:  
+    permutations: list[list[classes.City]] = [] # list of couple vectors
+    restrictions: list[int] = [] # list of indexes of vectors that are already in permutations
     couple1 = 0
     couple2 = 0
 
@@ -14,22 +15,34 @@ def new_permutation(array: list) -> list:
         if couple2 == array[a]:
             continue
         
-        couple1 = array[a]
-        for b in array:
+        if random.random() <= 0.6:
+            couple1 = array[a]
+        else:
+            continue
+
+        for i, b in enumerate(array):
             if b != couple1:
-                if ( b not in permutations and couple1 not in permutations ) and random.random() <= 0.6:
+                if ( a not in restrictions and i not in restrictions ) and random.random() <= 0.6:
                     couple2 = b
                     
+                    restrictions.append(a)
+                    restrictions.append(i)
                     permutations.append(couple1)
                     permutations.append(couple2)
 
                     break
+    
+    for a in array:
+        print([c.index for c in a])
+    print("permutations", len(permutations))
+    for a in permutations:
+        print([c.index for c in a])
 
-    return permutations
+    return [permutations, restrictions]  # type: ignore
 
-def crossover(array: list[classes.City]) -> list:
+def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
     # choose two vectors
-    permutation = new_permutation(array) # list of cities that need to be csossed
+    permutation, indexes = new_permutation(array) # list of cities that need to be csossed
     # choose n-1 cities in first vector
     # add other using order from second vector
     index_a_1 = 0
@@ -37,7 +50,21 @@ def crossover(array: list[classes.City]) -> list:
     index_b_1 = 0
     index_b_2 = 0
     new_generation = []
+
+    # put not changed vectors into new generation
+    # for i, a in enumerate(array):
+    #     if a not in permutation:
+    #         print("not in permutation")
+    #         indexes.append(i)
     
+    # for r in array:
+    #     print([c.index for c in r])
+    # print("diff")
+    # for r in permutation:
+    #     print([c.index for c in r])
+    # print(indexes)
+
+    # put changed vectors into new generation
     for a, b in [permutation[i:i+2] for i in range(0, len(permutation), 2)]:
         diff_1 = 0
         diff_2 = 0
@@ -53,9 +80,11 @@ def crossover(array: list[classes.City]) -> list:
             diff_2 = abs(index_b_1 - index_b_2)
 
         if index_a_1 > index_a_2:
-            print([a[index_a_2:index_a_1+1]])
+            for v in a[index_a_2:index_a_1+1]:
+                ...#print(v, "1>2")
         else:
-            print([a[index_a_1:index_a_2+1]])
+            for v in a[index_a_1:index_a_2+1]:
+                ...#print(v, "2>1")
 
     return new_generation
 
@@ -129,4 +158,4 @@ def genetics_algorithm():
 
     if answer in parrent_array:
         print(parrent_array.index(answer))
-    
+        
