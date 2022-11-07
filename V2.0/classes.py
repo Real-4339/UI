@@ -8,9 +8,6 @@ class Map:
         self.width = 200 # width in km
         self.height = 200 # height in km
         self.cities = [] # list of cities
-
-    def distance(self, x1:int, y1:int, x2:int, y2:int) -> float:
-        return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     
     def add_cities(self, city1, city2):
         self.cities.append(city1)
@@ -41,7 +38,7 @@ class Map:
 
             for city in self.cities:
                 if city not in answer_vektor:
-                    dis = self.distance(city1.x, city1.y, city.x, city.y)
+                    dis = distance(city1.x, city1.y, city.x, city.y)
                     if dis < min_distance:
                         min_distance = dis
                         city2 = city
@@ -68,6 +65,9 @@ class City:
     def __str__(self) -> str:
         return f"City {self.index} is at {self.x, self.y} km"
 
+
+def distance(x1:int, y1:int, x2:int, y2:int) -> float:
+        return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
 def generator() -> Map:
     map = Map()
