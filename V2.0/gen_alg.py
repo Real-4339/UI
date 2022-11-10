@@ -5,7 +5,7 @@ import classes
 def fitnes(array: list) -> int:
     return sum(classes.distance(array[a].x, array[a].y, array[a+1].x, array[a+1].y) for a in range(len(array)-1))  # type: ignore
 
-def new_permutation(array: list[list[classes.City]]) -> list[list[classes.City], list[int]]:  
+def new_permutation(array: list[list[classes.City]]) -> tuple[list[list[classes.City]], list[int]]:
     permutations: list[list[classes.City]] = [] # list of couple vectors
     restrictions: list[int] = [] # list of indexes of vectors that are already in permutations
     couple1 = 0
@@ -32,42 +32,53 @@ def new_permutation(array: list[list[classes.City]]) -> list[list[classes.City],
 
                     break
     
-    for a in array:
-        print([c.index for c in a])
-    print("permutations", len(permutations))
-    for a in permutations:
-        print([c.index for c in a])
+    # for a in array:
+    #     print([c.index for c in a])
+    # print("permutations", len(permutations))
+    # for a in permutations:
+    #     print([c.index for c in a])
 
-    return [permutations, restrictions]  # type: ignore
+    return permutations, restrictions
 
-def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
+def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # type: ignore
     # choose two vectors
-    permutation, indexes = new_permutation(array) # list of cities that need to be csossed
+    permutation, indexes_of_permutations = new_permutation(array) # list of cities that need to be csossed
     # choose n-1 cities in first vector
     # add other using order from second vector
     index_a_1 = 0
     index_a_2 = 0
+
     index_b_1 = 0
     index_b_2 = 0
-    new_generation = []
+    new_generation = [0] * len(array)
 
-    # put not changed vectors into new generation
-    # for i, a in enumerate(array):
-    #     if a not in permutation:
-    #         print("not in permutation")
-    #         indexes.append(i)
+    arr_a = []
+    arr_b = []
+    ind = -2
     
-    # for r in array:
-    #     print([c.index for c in r])
-    # print("diff")
-    # for r in permutation:
-    #     print([c.index for c in r])
-    # print(indexes)
+    # put not changed vectors into new generation
+    for a in range(len(array)):
+        if a not in indexes_of_permutations:
+            print(a, 'not in')
+            new_generation[a] = array[a] # type: ignore
+            #new_generation.append(array[a])
+    
+    print("new gen before")
+    for r in new_generation:
+        if not isinstance(r, int):
+            print([c.index for c in r]) # type: ignore
 
     # put changed vectors into new generation
     for a, b in [permutation[i:i+2] for i in range(0, len(permutation), 2)]:
+        arr_a = []
+        arr_b = []
         diff_1 = 0
         diff_2 = 0
+        ind += 2
+
+        print('-----------------------')
+        print("a", [c.index for c in a])
+        print("b", [c.index for c in b])
         
         while diff_1 == 0 or diff_1 == len(a)-1:
             index_a_1 = random.randint(0, len(a)-1)
@@ -79,14 +90,126 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
             index_b_2 = random.randint(0, len(b)-1)
             diff_2 = abs(index_b_1 - index_b_2)
 
-        if index_a_1 > index_a_2:
-            for v in a[index_a_2:index_a_1+1]:
-                ...#print(v, "1>2")
-        else:
-            for v in a[index_a_1:index_a_2+1]:
-                ...#print(v, "2>1")
+        a_c = []
+        b_c = []
+        bc = 0
+        ac = 0
 
-    return new_generation
+        print('diff1', diff_1, 'diff2', diff_2, index_a_1, index_a_2, index_b_1, index_b_2)
+
+        if index_a_1 > index_a_2:
+            print ("a1 > a2")
+            
+            for i in range (len(b)): # that need to be added to a + array of indexes
+                if b[i] not in a[index_a_2:index_a_1 + 1]:
+                    b_c.append(b[i])
+                    #print(b[i]) 
+
+            #print([c.index for c in a[index_a_2:index_a_1+1]])
+            #print(bc, len(b_c), b_c[bc])
+
+            u = 0
+            while u < len(b):
+                if u == index_a_2:
+                    for c in range (index_a_2, index_a_1 + 1):
+                        arr_a.append(a[c])
+                    u += diff_1
+                else:
+                    arr_a.append(b_c[bc])
+                    bc += 1
+                u += 1
+            
+            new_generation[indexes_of_permutations[ind]] = arr_a # type: ignore
+        else:
+            print ("a1 < a2")
+            for i in range (len(b)): # that need to be added to a + array of indexes
+                if b[i] not in a[index_a_1:index_a_2 + 1]:
+                    b_c.append(b[i]) 
+                    #print(b[i])
+            
+            #print([c.index for c in a[index_a_1:index_a_2+1]])
+
+            u = 0
+            while u < len(b):
+                if u == index_a_1:
+                    for c in range (index_a_1, index_a_2 + 1):
+                        arr_a.append(a[c])
+                    u += diff_1
+                else:
+                    arr_a.append(b_c[bc])
+                    bc += 1
+                u += 1
+
+            new_generation[indexes_of_permutations[ind]] = arr_a # type: ignore
+
+        if index_b_1 > index_b_2:
+            print ("b1 > b2")
+            for i in range (len(a)): # that need to be added to b + array of indexes
+                if a[i] not in b[index_b_2:index_b_1 + 1]:
+                    a_c.append(a[i])
+                    #print(a[i])
+
+            #print([c.index for c in b[index_b_2:index_b_1 + 1]])
+
+            u = 0
+            while u < len(a):
+                if u == index_b_2:
+                    for c in range (index_b_2, index_b_1 + 1):
+                        arr_b.append(b[c])
+                    u += diff_2
+                else:
+                    arr_b.append(a_c[ac])
+                    ac += 1
+                u += 1
+
+            new_generation[indexes_of_permutations[ind+1]] = arr_b # type: ignore
+        else:
+            print ("b1 < b2")
+            for i in range (len(a)): # that need to be added to b + array of indexes
+                if a[i] not in b[index_b_1:index_b_2 + 1]:
+                    a_c.append(a[i])
+                    #print(a[i])
+            
+            #print([c.index for c in b[index_b_1:index_b_2 + 1]])
+
+            u = 0
+            while u < len(a):
+                if u == index_b_1:
+                    for c in range (index_b_1, index_b_2 + 1):
+                        arr_b.append(b[c])
+                    u += diff_2
+                else:
+                    arr_b.append(a_c[ac])
+                    ac += 1
+                u += 1
+
+            new_generation[indexes_of_permutations[ind+1]] = arr_b # type: ignore
+        
+        # print("array")
+        # for r in array:
+        #     print([c.index for c in r])
+        # print("permutations")
+        # for r in permutation:
+        #     print([c.index for c in r])
+        # print("indexes: ", indexes_of_permutations)
+        # for r in new_generation:
+        #     if not isinstance(r, int):
+        #         print([c.index for c in r]) # type: ignore
+        
+        # if ind == 10:
+        #     break
+
+    print("array")
+    for r in array:
+        print([c.index for c in r])
+    print("permutations")
+    for r in permutation:
+        print([c.index for c in r])
+    print("indexes: ", indexes_of_permutations)
+    for r in new_generation:
+        print([c.index for c in r]) # type: ignore
+
+    return new_generation # type: ignore
 
 def choose_roulette(array_of_fitnes: list) -> int:
     # choose function (roulette)
@@ -158,4 +281,4 @@ def genetics_algorithm():
 
     if answer in parrent_array:
         print(parrent_array.index(answer))
-        
+    
