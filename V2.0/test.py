@@ -4,7 +4,7 @@ import gen_alg
 
 if __name__ == '__main__':
     
-    gen_alg.genetics_algorithm()
+    gen_alg.genetics_algorithm()  # type: ignore
     
     # try: 
     #     gen_alg.genetics_algorithm()
