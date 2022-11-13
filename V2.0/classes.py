@@ -27,7 +27,7 @@ class Map:
         self.coordinates_that_can_be_used.remove(y)
         return (x, y)
     
-    def answer(self):
+    def greedy_answer(self):
         answer_vektor = [] # list of cities
         city1: City = self.cities[0] # copy of the first city
         city2 = city1 # city2 is the city that is the closest to city1
