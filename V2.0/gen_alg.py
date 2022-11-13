@@ -2,8 +2,8 @@ import random
 import classes
 
 
-def fitnes(array: list) -> int:
-    return sum(classes.distance(array[a].x, array[a].y, array[a+1].x, array[a+1].y) for a in range(len(array)-1))  # type: ignore
+def fitnes(array: list) -> float:
+    return sum(classes.distance(array[a].x, array[a].y, array[a+1].x, array[a+1].y) for a in range(len(array)-1))
 
 def new_permutation(array: list[list[classes.City]]) -> tuple[list[list[classes.City]], list[int]]:
     permutations: list[list[classes.City]] = [] # list of couple vectors
@@ -59,14 +59,14 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
     # put not changed vectors into new generation
     for a in range(len(array)):
         if a not in indexes_of_permutations:
-            print(a, 'not in')
+            #print(a, 'not in')
             new_generation[a] = array[a] # type: ignore
             #new_generation.append(array[a])
     
-    print("new gen before")
-    for r in new_generation:
-        if not isinstance(r, int):
-            print([c.index for c in r]) # type: ignore
+    # print("new gen before")
+    # for r in new_generation:
+    #     if not isinstance(r, int):
+    #         print([c.index for c in r]) # type: ignore
 
     # put changed vectors into new generation
     for a, b in [permutation[i:i+2] for i in range(0, len(permutation), 2)]:
@@ -76,9 +76,9 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
         diff_2 = 0
         ind += 2
 
-        print('-----------------------')
-        print("a", [c.index for c in a])
-        print("b", [c.index for c in b])
+        # print('-----------------------')
+        # print("a", [c.index for c in a])
+        # print("b", [c.index for c in b])
         
         while diff_1 == 0 or diff_1 == len(a)-1:
             index_a_1 = random.randint(0, len(a)-1)
@@ -95,7 +95,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
         bc = 0
         ac = 0
 
-        print('diff1', diff_1, 'diff2', diff_2, index_a_1, index_a_2, index_b_1, index_b_2)
+        # print('diff1', diff_1, 'diff2', diff_2, index_a_1, index_a_2, index_b_1, index_b_2)
 
         if index_a_1 > index_a_2:
             print ("a1 > a2")
@@ -104,9 +104,6 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
                 if b[i] not in a[index_a_2:index_a_1 + 1]:
                     b_c.append(b[i])
                     #print(b[i]) 
-
-            #print([c.index for c in a[index_a_2:index_a_1+1]])
-            #print(bc, len(b_c), b_c[bc])
 
             u = 0
             while u < len(b):
@@ -119,7 +116,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
                     bc += 1
                 u += 1
             
-            new_generation[indexes_of_permutations[ind]] = arr_a # type: ignore
+            new_generation[indexes_of_permutations[ind]] = arr_a 
         else:
             print ("a1 < a2")
             for i in range (len(b)): # that need to be added to a + array of indexes
@@ -140,7 +137,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
                     bc += 1
                 u += 1
 
-            new_generation[indexes_of_permutations[ind]] = arr_a # type: ignore
+            new_generation[indexes_of_permutations[ind]] = arr_a 
 
         if index_b_1 > index_b_2:
             print ("b1 > b2")
@@ -162,7 +159,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
                     ac += 1
                 u += 1
 
-            new_generation[indexes_of_permutations[ind+1]] = arr_b # type: ignore
+            new_generation[indexes_of_permutations[ind+1]] = arr_b
         else:
             print ("b1 < b2")
             for i in range (len(a)): # that need to be added to b + array of indexes
@@ -183,7 +180,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
                     ac += 1
                 u += 1
 
-            new_generation[indexes_of_permutations[ind+1]] = arr_b # type: ignore
+            new_generation[indexes_of_permutations[ind+1]] = arr_b
         
         # print("array")
         # for r in array:
@@ -207,9 +204,9 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
         print([c.index for c in r])
     print("indexes: ", indexes_of_permutations)
     for r in new_generation:
-        print([c.index for c in r]) # type: ignore
+        print([c.index for c in r])
 
-    return new_generation # type: ignore
+    return new_generation
 
 def choose_roulette(array_of_fitnes: list) -> int:
     # choose function (roulette)
@@ -248,15 +245,19 @@ def genetics_algorithm():
     answer = map.answer() # answer vektor of cities: list
     parrent_array = [] # list of vectors
     array_of_fitnes = [] # list of fitnes
+    counter = 0 # counter of generations
 
     # first generation
-    for a in range(20):
+    u = 0
+    while u < 20:
         arr = answer[:]
         random.shuffle(arr)
         if arr not in parrent_array:
             array_of_fitnes.append(fitnes(arr))
             parrent_array.append(arr)
-        # else !? -------------------------------------------->
+        else:
+            u -= 1
+        u += 1
     
     # cycle through generations
     while answer not in parrent_array:
@@ -272,13 +273,24 @@ def genetics_algorithm():
         
         # crossover
         new_generation = crossover(new_generation)
-        break
+
+        for r in new_generation:
+            print([c.index for c in r])
 
         # mutation
+        if counter == 1:
+            break
 
         # change generations
         parrent_array = new_generation
 
-    if answer in parrent_array:
-        print(parrent_array.index(answer))
+        # check answer
+        if answer in parrent_array:
+            print(parrent_array.index(answer))
+            print("generation: ", counter)
+            break
+            
+        counter += 1
+
+    
     
