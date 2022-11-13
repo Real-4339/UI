@@ -40,7 +40,7 @@ def new_permutation(array: list[list[classes.City]]) -> tuple[list[list[classes.
 
     return permutations, restrictions
 
-def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # type: ignore
+def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
     # choose two vectors
     permutation, indexes_of_permutations = new_permutation(array) # list of cities that need to be csossed
     # choose n-1 cities in first vector
@@ -55,6 +55,10 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
     arr_a = []
     arr_b = []
     ind = -2
+
+    # print("origin array")
+    # for r in array:
+    #     print([c.index for c in r])
     
     # put not changed vectors into new generation
     for a in range(len(array)):
@@ -95,15 +99,17 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
         bc = 0
         ac = 0
 
-        # print('diff1', diff_1, 'diff2', diff_2, index_a_1, index_a_2, index_b_1, index_b_2)
+        #print('diff1', diff_1, 'diff2', diff_2, index_a_1, index_a_2, index_b_1, index_b_2)
 
         if index_a_1 > index_a_2:
-            print ("a1 > a2")
+            #print ("a1 > a2")
             
             for i in range (len(b)): # that need to be added to a + array of indexes
                 if b[i] not in a[index_a_2:index_a_1 + 1]:
                     b_c.append(b[i])
                     #print(b[i]) 
+
+            #print([c.index for c in a[index_a_2:index_a_1+1]])
 
             u = 0
             while u < len(b):
@@ -118,7 +124,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
             
             new_generation[indexes_of_permutations[ind]] = arr_a 
         else:
-            print ("a1 < a2")
+            #print ("a1 < a2")
             for i in range (len(b)): # that need to be added to a + array of indexes
                 if b[i] not in a[index_a_1:index_a_2 + 1]:
                     b_c.append(b[i]) 
@@ -140,7 +146,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
             new_generation[indexes_of_permutations[ind]] = arr_a 
 
         if index_b_1 > index_b_2:
-            print ("b1 > b2")
+            #print ("b1 > b2")
             for i in range (len(a)): # that need to be added to b + array of indexes
                 if a[i] not in b[index_b_2:index_b_1 + 1]:
                     a_c.append(a[i])
@@ -161,7 +167,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
 
             new_generation[indexes_of_permutations[ind+1]] = arr_b
         else:
-            print ("b1 < b2")
+            #print ("b1 < b2")
             for i in range (len(a)): # that need to be added to b + array of indexes
                 if a[i] not in b[index_b_1:index_b_2 + 1]:
                     a_c.append(a[i])
@@ -196,15 +202,15 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]: # ty
         # if ind == 10:
         #     break
 
-    print("array")
-    for r in array:
-        print([c.index for c in r])
-    print("permutations")
-    for r in permutation:
-        print([c.index for c in r])
-    print("indexes: ", indexes_of_permutations)
-    for r in new_generation:
-        print([c.index for c in r])
+    # print("array")
+    # for r in array:
+    #     print([c.index for c in r])
+    # print("permutations")
+    # for r in permutation:
+    #     print([c.index for c in r])
+    # print("indexes: ", indexes_of_permutations)
+    # for r in new_generation:
+    #     print([c.index for c in r])
 
     return new_generation
 
@@ -240,12 +246,31 @@ def printls(array: list) -> None:
     for a in array:
         print(a)
 
+def mutation(array: list[list[classes.City]]) -> list[list[classes.City]]:
+    # mutation function
+    mutation_rate: float = 0.1
+    for ind, a in enumerate(array):
+        if random.random() < mutation_rate:
+            index_1 = random.randint(0, len(a)-1)
+            if index_1 == len(a)-1:
+                index_2 = len(a)-2
+            elif index_1 == 0:
+                index_2 = 1
+            else:
+                index_2 = random.choice([index_1-1, index_1+1])
+            #print("mutation", index_1, index_2, ind)
+            a[index_1], a[index_2] = a[index_2], a[index_1]
+            array[ind] = a
+    return array
+
 def genetics_algorithm():
     map = classes.generator()
     answer = map.answer() # answer vektor of cities: list
+    answer_index = [c.index for c in answer] 
     parrent_array = [] # list of vectors
     array_of_fitnes = [] # list of fitnes
     counter = 0 # counter of generations
+    fintes_answer = fitnes(answer) # fitnes of answer
 
     # first generation
     u = 0
@@ -263,6 +288,14 @@ def genetics_algorithm():
     while answer not in parrent_array:
         # choose function based on fitnes
         new_generation = []
+
+        # print("parent array in cycle")
+        # for r in parrent_array:
+        #     print([c.index for c in r])
+        
+        # if new_generation == []:
+        #     print("new_generation is empty, v1")
+
         cube = random.randint(0, 5) # choose function
         if cube > 2:
             for a in range(len(array_of_fitnes)):
@@ -271,26 +304,48 @@ def genetics_algorithm():
             for a in range(len(array_of_fitnes)):
                 new_generation.append(parrent_array[choose_order(array_of_fitnes)])
         
+        # clean array_of_fitnes
+        array_of_fitnes = []
+
+        if new_generation == []:
+            print("new_generation is empty, v2")
+
         # crossover
         new_generation = crossover(new_generation)
 
-        for r in new_generation:
-            print([c.index for c in r])
+        # print("new generation in cycle")
+        # for r in new_generation:
+        #     print([c.index for c in r])
 
         # mutation
-        if counter == 1:
-            break
+        new_generation = mutation(new_generation)
+
+        # print("new generation in cycle after mutation")
+        # for r in new_generation:
+        #     print([c.index for c in r])
 
         # change generations
         parrent_array = new_generation
 
         # check answer
-        if answer in parrent_array:
-            print(parrent_array.index(answer))
-            print("generation: ", counter)
-            break
-            
-        counter += 1
+        for a in parrent_array:
+            a_index = [c.index for c in a]
+            if a_index == answer_index:
+                print(parrent_array.index(a), "index of answer")
+                print("generation: ", counter)
+                break
 
+        # if answer in parrent_array:
+        #     print(parrent_array.index(answer))
+        #     print("generation: ", counter)
+        #     break
+        
+        # add fitnes to array_of_fitnes
+        for u in range(20):
+            array_of_fitnes.append(fitnes(parrent_array[u]))
+
+        counter += 1
+        print(min(array_of_fitnes), counter, "answer fitnes", fintes_answer)
+    
     
     
