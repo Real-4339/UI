@@ -55,22 +55,12 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
     arr_a = []
     arr_b = []
     ind = -2
-
-    # print("origin array")
-    # for r in array:
-    #     print([c.index for c in r])
     
     # put not changed vectors into new generation
     for a in range(len(array)):
         if a not in indexes_of_permutations:
-            #print(a, 'not in')
             new_generation[a] = array[a] # type: ignore
-            #new_generation.append(array[a])
     
-    # print("new gen before")
-    # for r in new_generation:
-    #     if not isinstance(r, int):
-    #         print([c.index for c in r]) # type: ignore
 
     # put changed vectors into new generation
     for a, b in [permutation[i:i+2] for i in range(0, len(permutation), 2)]:
@@ -107,7 +97,6 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
             for i in range (len(b)): # that need to be added to a + array of indexes
                 if b[i] not in a[index_a_2:index_a_1 + 1]:
                     b_c.append(b[i])
-                    #print(b[i]) 
 
             #print([c.index for c in a[index_a_2:index_a_1+1]])
 
@@ -214,7 +203,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
 
     return new_generation
 
-def choose_roulette(array_of_fitnes: list) -> int: # bad desigeon, cause we need to find min not max
+def choose_roulette(array_of_fitnes: list) -> int:
     # choose function (roulette)
     S = int(sum(cc for cc in array_of_fitnes))
     r = random.randint(0, S-1)
@@ -229,22 +218,17 @@ def choose_roulette(array_of_fitnes: list) -> int: # bad desigeon, cause we need
     
     return index
 
-def choose_tournament(array_of_fitnes: list) -> int:
+def choose_tournament(array_of_fitnes: list) -> int: # scatyvaetsa v local minima
     # choose function (tournament)
     min_array = []
     min_array.append(array_of_fitnes.index(min(array_of_fitnes)))
     new_min = max(array_of_fitnes)
     new_index = -1
-    #print(array_of_fitnes)
-    #print(array_of_fitnes.index(min(array_of_fitnes)))
-    #print(min_array, "printing min array")
     for i in range(len(array_of_fitnes)//2):
         for ind, a in enumerate(array_of_fitnes):
             if ind not in min_array and a < new_min:
                 new_min = a
                 new_index = ind
-                #print(new_index, "printing new index")
-                #print(min_array, "printing min array in cycle")
         if new_index != -1:
             min_array.append(new_index)
             new_min = max(array_of_fitnes)
@@ -331,7 +315,7 @@ def genetics_algorithm():
         u += 1
     
     # cycle through generations
-    for a in range(1000):
+    for a in range(30000):
         # choose function based on fitnes
         new_generation = []
 
@@ -345,11 +329,6 @@ def genetics_algorithm():
             best_num = fitnes(parrent_array[b1])
             best_array = parrent_array[b1]
 
-
-        # print("parent array in cycle")
-        # for r in parrent_array:
-        #     print([c.index for c in r])
-        
 
         cube = random.randint(0, 5) # choose function
         if cube > 2:
@@ -368,23 +347,14 @@ def genetics_algorithm():
         # crossover
         new_generation = crossover(new_generation)
 
-        # print("new generation in cycle")
-        # for r in new_generation:
-        #     print([c.index for c in r])
-
         # mutation
         new_generation = mutation(new_generation)
-
-        # print("new generation in cycle after mutation")
-        # for r in new_generation:
-        #     print([c.index for c in r])
 
         # change generations
         parrent_array = new_generation
         
         # add fitnes to array_of_fitnes
         for u in range(20):
-            #print([c.index for c in parrent_array[u]])
             array_of_fitnes.append(fitnes(parrent_array[u]))
 
         counter += 1
@@ -392,7 +362,6 @@ def genetics_algorithm():
 
     
     # check answer
-    print("Greedy answer: ", answer_index, "fitnes: ", fintes_answer)
     print("Best now: ", [c.index for c in parrent_array[best(parrent_array, array_of_fitnes)[0]]], "fitnes: ", min(array_of_fitnes))
     print("Best ever: ", [c.index for c in best_array], "fitnes: ", best_num)
    
