@@ -55,7 +55,7 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
     arr_a = []
     arr_b = []
     ind = -2
-    
+
     # put not changed vectors into new generation
     for a in range(len(array)):
         if a not in indexes_of_permutations:
@@ -205,18 +205,25 @@ def crossover(array: list[list[classes.City]]) -> list[list[classes.City]]:
 
 def choose_roulette(array_of_fitnes: list) -> int:
     # choose function (roulette)
-    S = int(sum(cc for cc in array_of_fitnes))
-    r = random.randint(0, S-1)
-    max = 0
-    index = -1
-
-    for ind, a in enumerate(array_of_fitnes):
-        max += a
-        if max > r:
-            index = ind
-            break
+    arr_copy = [1/n for n in array_of_fitnes]
     
-    return index
+    index = random.choices(range(len(array_of_fitnes)), weights=arr_copy)
+    return index[0]
+    
+    # S = int(sum(cc for cc in array_of_fitnes))
+    
+    # r = random.randint(0, S-1)
+    # max = 0
+    # index = -1
+
+    # for ind, a in enumerate(array_of_fitnes):
+    #     max += a
+    #     if max > r:
+    #         index = ind
+    #         break
+    
+    # return index
+   
 
 def choose_tournament(array_of_fitnes: list) -> int: # scatyvaetsa v local minima
     # choose function (tournament)
@@ -240,7 +247,7 @@ def choose_tournament(array_of_fitnes: list) -> int: # scatyvaetsa v local minim
     return min_array[random.randint(0, len(min_array)-1)]
 
 def choose_order(array_of_fitnes: list) -> int:
-    array_of_fitnes.sort()
+    # array_of_fitnes.sort()
     index = random.choice(array_of_fitnes)
     return array_of_fitnes.index(index)
 
@@ -258,7 +265,7 @@ def printls(array: list) -> None:
 
 def mutation(array: list[list[classes.City]]) -> list[list[classes.City]]:
     # mutation function
-    mutation_rate: float = 0.1
+    mutation_rate: float = 0.7
     for ind, a in enumerate(array):
         if random.random() < mutation_rate:
             index_1 = random.randint(0, len(a)-1)
@@ -273,23 +280,48 @@ def mutation(array: list[list[classes.City]]) -> list[list[classes.City]]:
             array[ind] = a
     return array
 
+def mutation_2(array: list[classes.City]) -> list[classes.City]:
+    # mutation function
+    # 2 - Pick two cities and reverse the order of the cities between them
+    mutation_rate: float = 0.3
+    if random.random() > mutation_rate:
+        return array
+    
+    index_1 = random.randint(0, len(array)-1)
+    while True:
+        index_2 = random.randint(0, len(array)-1)
+        if index_2 != index_1:
+            break
+    if index_1 > index_2:
+        index_1, index_2 = index_2, index_1
+        
+    array[index_1:index_2+1] = array[index_1:index_2+1][::-1]
+    return array
+
+def mutation_3(array: list[classes.City]) -> list[classes.City]:
+    # mutation function
+    # 3 - Pick two random cities and reverse them
+
+    mutation_rate: float = 0.1
+    if random.random() > mutation_rate:
+        return array
+    index_1 = random.randint(0, len(array)-1)
+    while True:
+        index_2 = random.randint(0, len(array)-1)
+        if index_2 != index_1:
+            break
+
+    array[index_1], array[index_2] = array[index_2], array[index_1]
+    
+    return array
+
+
 def best(array: list[list[classes.City]], array_of_fitness: list[float]) -> tuple[int]:
     # best function
-    best = min(array_of_fitness)
-    best_index = array_of_fitness.index(best)
-    
-    arr_2 = array_of_fitness.copy()
-    arr_2.remove(best)
-    best_2 = min(arr_2)
-    best_2_index = array_of_fitness.index(best_2)
-    
-    arr_3 = arr_2.copy()
-    arr_3.remove(best_2)
-    best_3 = min(arr_3)
-    best_3_index = array_of_fitness.index(best_3)
+    arr_copy: list[tuple[int, float]] = [a for a in enumerate(array_of_fitness)]
+    arr_copy.sort(key=lambda x: x[1])
 
-    return best_index, best_2_index, best_3_index
-    
+    return arr_copy[0][0], arr_copy[1][0], arr_copy[2][0]
 
 def genetics_algorithm():
     map = classes.generator()
@@ -315,11 +347,11 @@ def genetics_algorithm():
         u += 1
     
     # cycle through generations
-    for a in range(30000):
+    for a in range(50000):
         # choose function based on fitnes
         new_generation = []
 
-        # # append best 3 vectors to new generation
+        # append best 3 vectors to new generation
         b1, b2, b3 = best(parrent_array, array_of_fitnes)
         new_generation.append(parrent_array[b1])
         new_generation.append(parrent_array[b2])
@@ -329,9 +361,11 @@ def genetics_algorithm():
             best_num = fitnes(parrent_array[b1])
             best_array = parrent_array[b1]
 
+        # for a in range(len(array_of_fitnes)-3):
+        #     new_generation.append(parrent_array[choose_roulette(array_of_fitnes)])
 
         cube = random.randint(0, 5) # choose function
-        if cube > 2:
+        if cube > 0:
             for a in range(len(array_of_fitnes)-3):
                 new_generation.append(parrent_array[choose_roulette(array_of_fitnes)])
         else:
@@ -348,7 +382,12 @@ def genetics_algorithm():
         new_generation = crossover(new_generation)
 
         # mutation
-        new_generation = mutation(new_generation)
+        if cube > 3:
+            new_generation = mutation(new_generation)
+        if cube > 1:
+            new_generation = [mutation_2(a) for a in new_generation]
+        else:
+            new_generation = [mutation_3(a) for a in new_generation]
 
         # change generations
         parrent_array = new_generation
@@ -362,6 +401,8 @@ def genetics_algorithm():
 
     
     # check answer
+    print("Fitnesess:", array_of_fitnes)
+    print("Greedy:", answer_index, fintes_answer)
     print("Best now: ", [c.index for c in parrent_array[best(parrent_array, array_of_fitnes)[0]]], "fitnes: ", min(array_of_fitnes))
     print("Best ever: ", [c.index for c in best_array], "fitnes: ", best_num)
    

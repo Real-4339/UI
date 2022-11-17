@@ -74,6 +74,8 @@ def generator() -> Map:
     for i in range(20):
         city1 = City(i)
         city1.x, city1.y = map.generate_coordinates()
+
+        # print(city1.x, city1.y, "coordinates")
         
         map.add_city(city1)
     
