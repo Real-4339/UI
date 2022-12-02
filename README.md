@@ -2,11 +2,11 @@
 
 ### Projects:
 
-> 8 puzzle game
+> 8 puzzle game(https://github.com/Real-4339/UI/tree/master/V1.0)
 
-> The Business Traveller Problem
+> The Business Traveller Problem(https://github.com/Real-4339/UI/tree/master/V2.0)
 
-> Clustering
+> Clustering(https://github.com/Real-4339/UI/tree/master/V3.0)
 
 ### FIIT STU 2022
 
