@@ -2,7 +2,7 @@
 
 ### Projects:
 
-> 8 puzzle game (https://github.com/Real-4339/UI/tree/master/V1.0)
+> [8 puzzle game](https://github.com/Real-4339/UI/tree/master/V1.0)
 
 > [The Business Traveller Problem](https://github.com/Real-4339/UI/tree/master/V2.0)
 
