@@ -6,7 +6,7 @@
 
 > [The Business Traveller Problem](https://github.com/Real-4339/UI/tree/master/V2.0)
 
-> [Clustering](https://github.com/Real-4339/UI/tree/master/V3.0)
+> [Clustering in 2D](https://github.com/Real-4339/UI/tree/master/V3.0)
 
 ### FIIT STU 2022
 
