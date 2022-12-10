@@ -12,14 +12,16 @@ def main(control: int):
     :param control: 0 - center is a centroid, 1 - center is a medoid
     """
     map = classes.Map()
+    print("starting picturing")
     map.picture_before()
 
+    print("asking for number of clusters")
     k = input("Enter the number of clusters: ") # number of clusters
     k = int(k)
 
     if control == 0:
         print("Centroid")     
-        map.centroid(k)
+        #map.centroid(k)
         #map.picture_after()
     elif control == 1:
         print("Medoid")
