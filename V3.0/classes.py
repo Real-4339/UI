@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Author: Vadym Tilihuzov
 import random
-#import numpy as np
+#import time
 from typing import TypeVar
 
 DotT = TypeVar("DotT", bound="Dot")
@@ -30,14 +30,14 @@ class Map:
             y.remove(b)
             self.map.add(Dot(float(a), float(b), i))
         # generate 20_000 dots
-        for i in range(10_000):
+        for i in range(20_000):
             based = random.choice(list(self.map))
             self.map.add(Dot(based.x + random.randrange(-100, 101), based.y + random.randrange(-100, 101), i+20))
         # generate remaining dots if needed
         last_i = len(self.map)
-        if last_i < 10_020:
+        if last_i < 20_020:
             print("Generating remaining dots")
-            count_to_generate = 10_020 - last_i
+            count_to_generate = 20_020 - last_i
             for i in range(count_to_generate):
                 based = random.choice(list(self.map))
                 self.map.add(Dot(based.x + random.randrange(-100, 101), based.y + random.randrange(-100, 101), last_i+i))
@@ -120,7 +120,6 @@ class Map:
                 cluster.center_y = current.y
             current = current.next
 
-
     def print_TD_distance(self):
         for i in self.TD_distance:
             print(i)
@@ -145,6 +144,7 @@ class Map:
         """
         self.generate_clusters()
         self.generate_TD_distance()
+        #startTime = time.time()
         while len(self.cluster) > k:
             # find min distance
             min_distance = self.TD_distance[0][1]
@@ -169,10 +169,13 @@ class Map:
                 if i != min_i:
                     self.TD_distance[min_i][i] = self.distance(self.cluster[min_i].center_x, self.cluster[min_i].center_y, self.cluster[i].center_x, self.cluster[i].center_y)
                     self.TD_distance[i][min_i] = self.TD_distance[min_i][i]
+        
+        #executionTime = (time.time() - startTime)
+        #print('Execution time in seconds: ' + str(executionTime))
         # print statistics
         self.statistics(k)
         # print clusters
-        self.picture_after(k)
+        self.picture_after(k, 'centroid')
 
     def medoid(self, k:int):
         """
@@ -180,6 +183,7 @@ class Map:
         """
         self.generate_clusters()
         self.generate_TD_distance()
+        #startTime = time.time()
         while len(self.cluster) > k:
             # find min distance
             min_distance = self.TD_distance[0][1]
@@ -204,12 +208,14 @@ class Map:
                 if i != min_i:
                     self.TD_distance[min_i][i] = self.distance(self.cluster[min_i].center_x, self.cluster[min_i].center_y, self.cluster[i].center_x, self.cluster[i].center_y)
                     self.TD_distance[i][min_i] = self.TD_distance[min_i][i]
+        #executionTime = (time.time() - startTime)
+        #print('Execution time in seconds: ' + str(executionTime))
         # print statistics
-        self.statistics(k)
+        # self.statistics(k)
         # print clusters
-        self.picture_after(k)
+        # self.picture_after(k, 'medoid')
             
-    def picture_after(self, k:int):
+    def picture_after(self, k:int, method:str='centroid'):
         import matplotlib.pyplot as plt
         #colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown', 'gray', 'olive', 'cyan']
         for i in range(k):
@@ -223,6 +229,8 @@ class Map:
             plt.scatter(x, y) # add all clusters
             plt.scatter(self.cluster[i].center_x, self.cluster[i].center_y, color='black') # add center of cluster
         plt.title(f'After clustering with {k} clusters')
+        plt.set_xlabel(method) # add method
+        plt.savefig(f'{method}_{k}.png')
         plt.show()
 
     def statistics(self, k:int):
@@ -269,17 +277,3 @@ class Cluster:
         cluster1.tail.next = cluster2.head
         cluster1.tail = cluster2.tail
         return cluster1
-
-# Trash
-# choices = np.random.choice(self.map, k, replace=False)
-"""
-min_distance = self.distance_dots(cluster.head, cluster.tail)
-        current = cluster.head
-        while current:
-            distance = self.distance_dots(current, cluster.tail)
-            if distance < min_distance:
-                min_distance = distance
-                cluster.center_x = current.x
-                cluster.center_y = current.y
-            current = current.next
-"""

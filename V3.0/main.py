@@ -1,4 +1,5 @@
 import classes
+import timeit
 
 """
 Centroid Method: each iteration merges the clusters with the most similar centroid. A centroid is the average of all points in the system.
@@ -20,10 +21,12 @@ def main(control: int):
 
     if control == 0:
         print("Centroid")     
-        map.centroid(k)
+        total_time = timeit.timeit(lambda: map.centroid(k), number=1)
+        print("Total time: ", total_time)
     elif control == 1:
         print("Medoid")
-        map.medoid(k)
+        total_time = timeit.timeit(lambda: map.medoid(k), number=1)
+        print("Total time: ", total_time)
     else:
         print("Error")
         return
