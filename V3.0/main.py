@@ -15,15 +15,15 @@ def main(control: int):
     #print("starting picturing")
     #map.picture_before()
 
-    print("asking for number of clusters")
     k = input("Enter the number of clusters: ") # number of clusters
     k = int(k)
 
     if control == 0:
-        #print("Centroid")     
+        print("Centroid")     
         map.centroid(k)
     elif control == 1:
         print("Medoid")
+        map.medoid(k)
     else:
         print("Error")
         return
