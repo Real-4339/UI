@@ -96,6 +96,7 @@ class Map:
         plt.title('Before clustering')
         plt.show()
 
+    # remake this function
     def centroid(self, k:int):
         """
         :param k: number of clusters

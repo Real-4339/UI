@@ -28,9 +28,6 @@ def main(control: int):
         print("Error")
         return
 
-    
-
-
 
 if __name__ == "__main__":
     main(int(input("Enter 0 or 1: ")))
