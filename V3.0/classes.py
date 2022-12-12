@@ -112,6 +112,7 @@ class Map:
             cluster.center_x = cluster.head.x
             cluster.center_y = cluster.head.y
             return
+        self.count_center(cluster)
         self.center = Dot(cluster.center_x, cluster.center_y, -1)
         min_distance = self.distance_dots(self.center, cluster.head)
         current = cluster.head
