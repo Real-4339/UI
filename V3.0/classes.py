@@ -13,11 +13,14 @@ class Map:
     TD_distance: list = list(list()) # two-dimensional distance TD
     cluster: list = list() # array of clusters
 
-    def __init__(self):
+    def __init__(self, method: int):
         self.width = 10_000 # from -5_000 to 5_000
         self.height = 10_000 # from -5_000 to 5_000
         self.map:set = set() # array of dots
-        self.generate()
+        if method == 0:
+            self.generate()
+        elif method == 1:
+            self.generate_for_medoid()
 
     def generate(self):
         # generate 20 dots
@@ -229,25 +232,27 @@ class Map:
             plt.scatter(x, y) # add all clusters
             plt.scatter(self.cluster[i].center_x, self.cluster[i].center_y, color='black') # add center of cluster
         plt.title(f'After clustering with {k} clusters')
-        plt.set_xlabel(method) # add method
+        plt.xlabel(method) # add method
         plt.savefig(f'{method}_{k}.png')
         plt.show()
 
     def statistics(self, k:int):
-        # find max distance from center in cluster
-        # if max distance > 500: print('bad')
+        # find mean distance from center in cluster
+        # if mean distance > 500: print('bad')
         # else: print('good') and count number of good clusters and bad clusters
         good = 0
         bad = 0
         for i in range(k):       
-            max_distance = 0
+            all_distance = 0
             current = self.cluster[i].head
+            size = 0
             while current:
                 distance = self.distance(current.x, current.y, self.cluster[i].center_x, self.cluster[i].center_y)
-                if distance > max_distance:
-                    max_distance = distance
+                all_distance += distance
                 current = current.next
-            if max_distance > 500:
+                size += 1
+            all_distance /= size
+            if all_distance > 500:
                 bad += 1
             else:
                 good += 1

@@ -12,19 +12,22 @@ def main(control: int):
     Main function
     :param control: 0 - center is a centroid, 1 - center is a medoid
     """
-    map = classes.Map()
-    #print("starting picturing")
-    #map.picture_before()
-
+    
     k = input("Enter the number of clusters: ") # number of clusters
     k = int(k)
 
     if control == 0:
         print("Centroid")     
+        map = classes.Map(0)
+        print("starting picturing")
+        map.picture_before()
         total_time = timeit.timeit(lambda: map.centroid(k), number=1)
         print("Total time: ", total_time)
     elif control == 1:
         print("Medoid")
+        map = classes.Map(1)
+        print("starting picturing")
+        map.picture_before()
         total_time = timeit.timeit(lambda: map.medoid(k), number=1)
         print("Total time: ", total_time)
     else:
