@@ -33,14 +33,14 @@ class Map:
             y.remove(b)
             self.map.add(Dot(float(a), float(b), i))
         # generate 20_000 dots
-        for i in range(20_000):
+        for i in range(5_000):
             based = random.choice(list(self.map))
             self.map.add(Dot(based.x + random.randrange(-100, 101), based.y + random.randrange(-100, 101), i+20))
         # generate remaining dots if needed
         last_i = len(self.map)
-        if last_i < 20_020:
+        if last_i < 5_020:
             print("Generating remaining dots")
-            count_to_generate = 20_020 - last_i
+            count_to_generate = 5_020 - last_i
             for i in range(count_to_generate):
                 based = random.choice(list(self.map))
                 self.map.add(Dot(based.x + random.randrange(-100, 101), based.y + random.randrange(-100, 101), last_i+i))
@@ -234,7 +234,7 @@ class Map:
             plt.scatter(self.cluster[i].center_x, self.cluster[i].center_y, color='black') # add center of cluster
         plt.title(f'After clustering with {k} clusters')
         plt.xlabel(method) # add method
-        plt.savefig(f'{method}_{k}.png')
+        plt.savefig(f'./Photos/{method}_{k}.png')
         plt.show()
 
     def statistics(self, k:int):
