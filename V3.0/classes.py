@@ -215,9 +215,9 @@ class Map:
         #executionTime = (time.time() - startTime)
         #print('Execution time in seconds: ' + str(executionTime))
         # print statistics
-        # self.statistics(k)
+        self.statistics(k)
         # print clusters
-        # self.picture_after(k, 'medoid')
+        self.picture_after(k, 'medoid')
             
     def picture_after(self, k:int, method:str='centroid'):
         import matplotlib.pyplot as plt
