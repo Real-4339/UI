@@ -12,5 +12,5 @@
 
 ### License
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/Real-4339/Artur/blob/main/LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/Real-4339/UI/LICENSE)
 
